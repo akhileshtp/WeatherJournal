@@ -14,7 +14,7 @@ with open('/app/frontend/.env', 'r') as f:
 
 # Ensure the URL doesn't have quotes
 BACKEND_URL = BACKEND_URL.strip("'\"")
-API_URL = urljoin(BACKEND_URL, '/api')
+API_URL = f"{BACKEND_URL}/api"  # Make sure we have the /api prefix
 
 print(f"Testing against backend URL: {API_URL}")
 
@@ -22,7 +22,7 @@ class YouTubeAudioDownloaderTest(unittest.TestCase):
     
     def test_api_root(self):
         """Test the API root endpoint"""
-        response = requests.get(urljoin(API_URL, '/'))
+        response = requests.get(f"{API_URL}/")
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertEqual(data['message'], 'YouTube Audio Downloader API')
@@ -37,7 +37,7 @@ class YouTubeAudioDownloaderTest(unittest.TestCase):
             "quality": "high"
         }
         
-        response = requests.post(urljoin(API_URL, '/download'), json=payload)
+        response = requests.post(f"{API_URL}/download", json=payload)
         self.assertEqual(response.status_code, 200)
         data = response.json()
         
@@ -47,7 +47,7 @@ class YouTubeAudioDownloaderTest(unittest.TestCase):
         
         # Test downloading the file
         file_id = data['file_path'].replace('/', '__')
-        file_response = requests.get(urljoin(API_URL, f'/download-file/{file_id}'))
+        file_response = requests.get(f"{API_URL}/download-file/{file_id}")
         self.assertEqual(file_response.status_code, 200)
         
         print(f"✅ Basic YouTube URL test passed - Downloaded: {data['title']}")
@@ -65,7 +65,7 @@ class YouTubeAudioDownloaderTest(unittest.TestCase):
                 "quality": "medium"  # Using medium quality to speed up tests
             }
             
-            response = requests.post(urljoin(API_URL, '/download'), json=payload)
+            response = requests.post(f"{API_URL}/download", json=payload)
             self.assertEqual(response.status_code, 200)
             data = response.json()
             
@@ -87,7 +87,7 @@ class YouTubeAudioDownloaderTest(unittest.TestCase):
                 "quality": quality
             }
             
-            response = requests.post(urljoin(API_URL, '/download'), json=payload)
+            response = requests.post(f"{API_URL}/download", json=payload)
             self.assertEqual(response.status_code, 200)
             data = response.json()
             
@@ -112,7 +112,7 @@ class YouTubeAudioDownloaderTest(unittest.TestCase):
                 "quality": "high"
             }
             
-            response = requests.post(urljoin(API_URL, '/download'), json=payload)
+            response = requests.post(f"{API_URL}/download", json=payload)
             self.assertEqual(response.status_code, 400)
             
             print(f"✅ URL validation test passed for invalid URL: {url}")
@@ -127,7 +127,7 @@ class YouTubeAudioDownloaderTest(unittest.TestCase):
             "quality": "high"
         }
         
-        response = requests.post(urljoin(API_URL, '/download'), json=payload)
+        response = requests.post(f"{API_URL}/download", json=payload)
         self.assertEqual(response.status_code, 400)
         
         print(f"✅ Error handling test passed for unavailable video")
@@ -141,7 +141,7 @@ class YouTubeAudioDownloaderTest(unittest.TestCase):
             "quality": "high"
         }
         
-        response = requests.post(urljoin(API_URL, '/download'), json=payload)
+        response = requests.post(f"{API_URL}/download", json=payload)
         self.assertEqual(response.status_code, 200)
         data = response.json()
         

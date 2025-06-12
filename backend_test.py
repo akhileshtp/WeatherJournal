@@ -157,11 +157,13 @@ if __name__ == "__main__":
     # First, let's check if the API is reachable
     try:
         response = requests.get(urljoin(API_URL, '/'))
-        print(f"API root response: {response.status_code}")
-        if response.status_code == 200:
-            print(f"API response content: {response.json()}")
-        else:
-            print(f"API response error: {response.text}")
+        print(f"API root response status: {response.status_code}")
+        print(f"API root response content: {response.text}")
+        try:
+            json_data = response.json()
+            print(f"API root JSON response: {json_data}")
+        except Exception as e:
+            print(f"Error parsing JSON: {str(e)}")
     except Exception as e:
         print(f"Error connecting to API: {str(e)}")
     

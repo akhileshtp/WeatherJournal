@@ -154,25 +154,58 @@ if __name__ == "__main__":
     # Run the tests
     print("Starting YouTube Audio Downloader API Tests...")
     
+    # First, let's check if the API is reachable
+    try:
+        response = requests.get(urljoin(API_URL, '/'))
+        print(f"API root response: {response.status_code}")
+        if response.status_code == 200:
+            print(f"API response content: {response.json()}")
+        else:
+            print(f"API response error: {response.text}")
+    except Exception as e:
+        print(f"Error connecting to API: {str(e)}")
+    
     # Create a test suite
     suite = unittest.TestSuite()
     suite.addTest(YouTubeAudioDownloaderTest('test_api_root'))
-    suite.addTest(YouTubeAudioDownloaderTest('test_basic_youtube_url'))
-    suite.addTest(YouTubeAudioDownloaderTest('test_different_formats'))
-    suite.addTest(YouTubeAudioDownloaderTest('test_different_qualities'))
-    suite.addTest(YouTubeAudioDownloaderTest('test_url_validation'))
-    suite.addTest(YouTubeAudioDownloaderTest('test_error_handling'))
-    suite.addTest(YouTubeAudioDownloaderTest('test_short_youtube_url'))
     
-    # Run the tests
+    # Run the basic test first to see if it works
     runner = unittest.TextTestRunner(verbosity=2)
     result = runner.run(suite)
+    
+    if len(result.failures) == 0 and len(result.errors) == 0:
+        print("✅ API root test passed, continuing with other tests...")
+        
+        # Add the rest of the tests
+        suite = unittest.TestSuite()
+        suite.addTest(YouTubeAudioDownloaderTest('test_basic_youtube_url'))
+        suite.addTest(YouTubeAudioDownloaderTest('test_different_formats'))
+        suite.addTest(YouTubeAudioDownloaderTest('test_different_qualities'))
+        suite.addTest(YouTubeAudioDownloaderTest('test_url_validation'))
+        suite.addTest(YouTubeAudioDownloaderTest('test_error_handling'))
+        suite.addTest(YouTubeAudioDownloaderTest('test_short_youtube_url'))
+        
+        # Run the tests
+        result = runner.run(suite)
     
     # Print summary
     print("\n=== TEST SUMMARY ===")
     print(f"Total tests: {result.testsRun}")
     print(f"Failures: {len(result.failures)}")
     print(f"Errors: {len(result.errors)}")
+    
+    # Print detailed error information
+    if len(result.failures) > 0:
+        print("\n=== FAILURES ===")
+        for i, (test, traceback) in enumerate(result.failures):
+            print(f"\nFailure {i+1}: {test}")
+            print(traceback)
+    
+    if len(result.errors) > 0:
+        print("\n=== ERRORS ===")
+        for i, (test, traceback) in enumerate(result.errors):
+            print(f"\nError {i+1}: {test}")
+            print(traceback)
     
     if len(result.failures) == 0 and len(result.errors) == 0:
         print("✅ All tests passed successfully!")

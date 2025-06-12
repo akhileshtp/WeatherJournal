@@ -37,7 +37,11 @@ class YouTubeAudioDownloaderTest(unittest.TestCase):
             "quality": "high"
         }
         
+        print(f"Sending request to {API_URL}/download with payload: {payload}")
         response = requests.post(f"{API_URL}/download", json=payload)
+        print(f"Response status code: {response.status_code}")
+        print(f"Response content: {response.text}")
+        
         self.assertEqual(response.status_code, 200)
         data = response.json()
         
@@ -47,7 +51,11 @@ class YouTubeAudioDownloaderTest(unittest.TestCase):
         
         # Test downloading the file
         file_id = data['file_path'].replace('/', '__')
+        print(f"Requesting file with ID: {file_id}")
         file_response = requests.get(f"{API_URL}/download-file/{file_id}")
+        print(f"File response status code: {file_response.status_code}")
+        print(f"File response headers: {file_response.headers}")
+        
         self.assertEqual(file_response.status_code, 200)
         
         print(f"✅ Basic YouTube URL test passed - Downloaded: {data['title']}")
